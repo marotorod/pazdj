@@ -1,0 +1,121 @@
+---
+import '../styles/global.css';
+import { site, socials, bio } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.url).href.replace(/\/$/, '') || site.url;
+const ogImage = new URL('/og.jpg', site.url).href;
+
+/* Datos estructurados: sólo hechos que están en la página.
+   `sameAs` contiene exclusivamente los perfiles reales enlazados en el sitio. */
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  jobTitle: 'DJ',
+  description: bio[0],
+  image: ogImage,
+  nationality: { '@type': 'Country', name: 'Colombia' },
+  sameAs: socials.map((s) => s.href),
+};
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#281f1d" />
+
+    <!-- Favicons originales de pazdj.com -->
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Únicos recursos precargados: las dos fuentes que se usan sobre la
+         línea de flotación. La imagen LCP se prioriza con fetchpriority. -->
+    <link
+      rel="preload"
+      href="/fonts/poppins-200-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/poppins-300-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Marca el documento antes del primer pintado: el CSS de aparición
+         sólo se aplica si hay JavaScript capaz de revertirlo. -->
+    <script is:inline>
+      document.documentElement.classList.add('has-js');
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} is:inline />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <slot name="footer" />
+
+    <script>
+      // Aparición discreta de bloques al entrar en viewport.
+      // Si el sistema pide movimiento reducido no se hace nada: el CSS ya deja
+      // los bloques visibles y este script ni siquiera observa.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const blocks = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (reduce.matches || !('IntersectionObserver' in window)) {
+        blocks.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+        );
+        blocks.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

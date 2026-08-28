@@ -1,0 +1,66 @@
+---
+import SocialRail from './SocialRail.astro';
+import { bio } from '../data/site';
+---
+
+<section class="bio" id="bio" aria-labelledby="bio-heading">
+  <h2 class="sr-only" id="bio-heading">Biografía</h2>
+
+  <div class="canvas bio__grid">
+    <SocialRail class="bio__rail" />
+
+    <div class="bio__text reveal">
+      {bio.map((p) => <p>{p}</p>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .bio {
+    background-color: var(--color-ink);
+    padding-block: var(--spacing-section);
+  }
+
+  .bio__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .bio__text {
+    display: grid;
+    gap: clamp(1.25rem, 2.6vw, 2.25rem);
+    color: var(--color-text);
+    /* Alineación a la derecha: es uno de los rasgos editoriales del original. */
+    text-align: right;
+    /* Medida controlada para que el borde irregular quede a la izquierda
+       sin que las líneas se hagan largas. */
+    max-inline-size: 62ch;
+    margin-inline-start: auto;
+  }
+
+  @media (width < 64rem) {
+    .bio__text {
+      max-inline-size: 46ch;
+    }
+  }
+
+  /* Escritorio: rail vertical al 15 % y columna de texto al 56 %,
+     las proporciones del canvas original. */
+  @media (width >= 64rem) {
+    .bio__grid {
+      /* El rail queda centrado sobre el 19,5 % del viewport, la misma
+         posición que ocupaba la columna de iconos en el canvas original. */
+      grid-template-columns: minmax(0, 29.6%) minmax(0, 1fr);
+      align-items: stretch;
+      gap: clamp(1.5rem, 5vw, 4rem);
+    }
+
+    .bio__rail {
+      grid-column: 1;
+    }
+
+    .bio__text {
+      grid-column: 2;
+    }
+  }
+</style>

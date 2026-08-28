@@ -1,0 +1,264 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Design tokens
+   Extraídos del sitio original (canvas de referencia: 1425 px de ancho).
+   No son un "design system" corporativo: sólo fijan la consistencia técnica
+   de los valores que ya usaba pazdj.com.
+   ========================================================================== */
+
+@theme {
+  /* --- Color ------------------------------------------------------------
+     Muestreados del DOM y de la captura de pazdj.com.                    */
+  --color-red: #800000; /* fondo hero y sección de sesión destacada */
+  --color-ink: #281f1d; /* fondo bio, galería y contacto; color del wordmark */
+  --color-text: #a6a6a6; /* cuerpo de texto sobre ink — 6.6:1 */
+  --color-text-soft: #bcbcbc; /* tagline sobre rojo — 6.4:1 */
+  --color-paper: #ffffff; /* caption de vídeo y bloque de contacto */
+  /* Rojo elevado sólo para iconos/enlaces sobre ink: el #800000 original
+     da 1.3:1 y no cumple WCAG 1.4.11. Ver MIGRATION.md. */
+  --color-accent: #d42b2b;
+
+  /* --- Tipografía -------------------------------------------------------
+     Escala fluida derivada de los tamaños del canvas original.           */
+  --font-sans:
+    'Poppins', 'Poppins Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* El SVG del logotipo mide exactamente la altura de caja alta, no el
+     cuerpo tipográfico: 189.3px sobre el canvas de 1425 del original. */
+  --text-wordmark: clamp(4.5rem, 13.13vw, 15.75rem); /* 189px @1440, 252px @1920 */
+  --text-tagline: clamp(1.25rem, 2.34vw, 2.125rem); /* 33.4px  @1425 */
+  --text-body: clamp(1.0625rem, 1.59vw, 1.4375rem); /* 22.7px  @1425 */
+  --text-caption: clamp(1.0625rem, 1.69vw, 1.5rem); /* 24.1px  @1425 */
+  --text-contact: clamp(1.125rem, 2.1vw, 1.875rem); /* 30.0px  @1425 */
+  --text-letter: clamp(1rem, 1.63vw, 1.5rem); /* 23.2px  @1425 */
+  --text-credit: clamp(0.8125rem, 0.98vw, 0.875rem); /* 13.9px  @1425 */
+
+  --leading-body: 1.37; /* 31 / 22.67 en el original */
+  --leading-tight: 1.15;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --container-canvas: 1425px; /* ancho del canvas original */
+  --spacing-gutter: clamp(0.5rem, 1.03vw, 0.9375rem); /* 14.7px @1425 */
+  --spacing-inline: clamp(1.25rem, 6.68vw, 5.9375rem); /* 95.2px @1425 */
+  --spacing-section: clamp(3.5rem, 7vw, 6.25rem);
+
+  /* --- Movimiento ------------------------------------------------------- */
+  --ease-editorial: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+}
+
+/* Capas de apilado, en una sola definición para evitar z-index arbitrarios. */
+:root {
+  --z-media: 0;
+  --z-content: 1;
+  --z-overlay: 2;
+  --z-skip: 100;
+}
+
+/* ==========================================================================
+   Fuentes
+   El sitio original usa Devasia (wordmark) y Balgin ExtraLight (texto), ambas
+   comerciales y no redistribuibles. El wordmark se conserva vectorizado; el
+   texto usa Poppins (OFL), la geométrica libre más próxima a Balgin.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url('/fonts/poppins-200-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url('/fonts/poppins-200-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/poppins-300-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/poppins-300-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* Fallback con métricas ajustadas: evita el salto de layout mientras carga
+   Poppins (x-height y ascendentes igualadas a las de la fuente real). */
+@font-face {
+  font-family: 'Poppins Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 105.7%;
+  ascent-override: 99.3%;
+  descent-override: 33.1%;
+  line-gap-override: 0%;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-ink);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Ningún scroll horizontal accidental, en ninguna resolución. */
+  overflow-x: clip;
+}
+
+img,
+svg,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+/* Un único anillo de foco para todo el sitio, siempre visible sobre
+   cualquiera de los dos fondos. */
+:focus-visible {
+  outline: 2px solid var(--color-paper);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Cualquier zona interactiva llega a 44x44 CSS px. */
+.tap-target {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--z-skip);
+  padding: 0.75rem 1.25rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 1rem;
+  text-decoration: none;
+  transform: translateY(-110%);
+  transition: transform var(--duration-fast) var(--ease-editorial);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline-offset: -4px;
+  outline-color: var(--color-ink);
+}
+
+/* Contenedor del canvas: reproduce las proporciones del sitio original y se
+   detiene en 1425 px, igual que el diseño de origen. */
+.canvas {
+  inline-size: 100%;
+  max-inline-size: var(--container-canvas);
+  margin-inline: auto;
+  padding-inline: var(--spacing-inline);
+}
+
+/* ==========================================================================
+   Movimiento
+   Aparición discreta al entrar en viewport. Sólo se aplica a bloques
+   completos (nunca a cada elemento), y desaparece por completo si el sistema
+   pide movimiento reducido.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Sin JavaScript no hay nada que devuelva la opacidad: la clase `has-js`
+     la pone el propio script, así que el contenido siempre es visible
+     aunque el script no llegue a ejecutarse. */
+  .has-js .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 620ms var(--ease-editorial),
+      transform 620ms var(--ease-editorial);
+  }
+
+  .has-js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important; /* documentado: neutraliza motion de terceros (embeds) */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

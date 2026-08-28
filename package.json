@@ -1,0 +1,43 @@
+{
+  "name": "pazdj-web",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sitio oficial de PAZ, DJ colombiana de la escena underground.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "verify": "npm run check && npm run lint && npm run build && npm run audit && npm run interactions",
+    "audit": "node scripts/audit.mjs",
+    "interactions": "node scripts/interactions.mjs",
+    "shots": "node scripts/shots.mjs",
+    "measure": "node scripts/measure.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.14.1",
+    "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@eslint/js": "^9.37.0",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/vite": "^4.1.14",
+    "axe-core": "^4.13.0",
+    "eslint": "^9.37.0",
+    "eslint-plugin-astro": "^1.3.1",
+    "globals": "^17.11.0",
+    "playwright": "^1.62.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.45.0",
+    "vite": "^6.4.1"
+  }
+}

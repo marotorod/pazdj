@@ -1,0 +1,11 @@
+# Normaliza los finales de línea: se trabaja en Windows y se construye en Linux.
+* text=auto eol=lf
+
+# Binarios: nunca tocar.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.woff2 binary
+*.ico binary

@@ -1,0 +1,173 @@
+---
+/**
+ * Fachada de carga bajo demanda para embeds de terceros.
+ *
+ * El original de pazdj.com carga los iframes de YouTube y SoundCloud en el
+ * arranque: ~1 MB de JavaScript de terceros y cookies antes de que nadie pida
+ * reproducir nada. Aquí no se contacta con ningún dominio externo hasta que la
+ * persona pulsa. Siempre queda, además, un enlace directo a la plataforma.
+ */
+interface Props {
+  /** URL del iframe (se inserta sólo tras la interacción). */
+  src: string;
+  /** Título del iframe y base del nombre accesible del botón. */
+  title: string;
+  /** Plataforma, para el texto del botón y del enlace. */
+  platform: string;
+  /** Enlace directo, siempre disponible aunque no se cargue el embed. */
+  href: string;
+  /** Relación de aspecto del hueco reservado (evita cualquier CLS). */
+  ratio?: string;
+  class?: string;
+}
+
+const { src, title, platform, href, ratio = '16 / 9', class: className } = Astro.props;
+---
+
+<div class:list={['embed', className]} style={`--embed-ratio:${ratio}`} data-embed>
+  <div class="embed__frame">
+    <slot name="poster" />
+
+    <button class="embed__button" type="button" data-embed-src={src} data-embed-title={title}>
+      <span class="embed__play" aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="100%" height="100%" fill="none" aria-hidden="true">
+          <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2.5"></circle>
+          <path d="M40 31 L72 50 L40 69 Z" fill="currentColor"></path>
+        </svg>
+      </span>
+      <span class="sr-only"
+        >Reproducir «{title}» en {platform}. Al pulsar se carga contenido de {platform}.</span
+      >
+    </button>
+  </div>
+
+  <p class="embed__fallback">
+    <a href={href} target="_blank" rel="noopener noreferrer"
+      >Abrir «{title}» en {platform}<span class="sr-only"> (se abre en una pestaña nueva)</span></a
+    >
+  </p>
+</div>
+
+<style>
+  .embed {
+    display: grid;
+    gap: 0.75rem;
+    inline-size: 100%;
+  }
+
+  .embed__frame {
+    position: relative;
+    aspect-ratio: var(--embed-ratio);
+    inline-size: 100%;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--color-ink) 80%, black);
+  }
+
+  .embed__frame :global(img),
+  .embed__frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    object-fit: cover;
+  }
+
+  .embed__button {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--color-ink) 35%, transparent);
+    color: var(--color-paper);
+    cursor: pointer;
+    transition: background-color var(--duration-base) var(--ease-editorial);
+  }
+
+  .embed__button:hover,
+  .embed__button:focus-visible {
+    background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .embed__button:focus-visible {
+    outline-offset: -6px;
+  }
+
+  .embed__play {
+    inline-size: clamp(3.5rem, 8vw, 5.5rem);
+    aspect-ratio: 1;
+    display: block;
+    transition: transform var(--duration-base) var(--ease-editorial);
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (pointer: fine) {
+    .embed__button:hover .embed__play {
+      transform: scale(1.06);
+    }
+  }
+
+  .embed__fallback {
+    margin: 0;
+    font-size: var(--text-credit);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .embed__fallback a {
+    /* Objetivo táctil cómodo sin engordar visualmente el texto. */
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+    text-underline-offset: 0.35em;
+  }
+
+  .embed__fallback a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Cuando el iframe ya está montado, la fachada desaparece. */
+  .embed[data-embed-loaded] .embed__button {
+    display: none;
+  }
+
+  .embed[data-embed-loaded] .embed__frame :global(img) {
+    display: none;
+  }
+</style>
+
+<script>
+  // Un único listener delegado para todas las fachadas de la página.
+  document.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>(
+      '.embed__button',
+    );
+    if (!button) return;
+
+    const wrapper = button.closest<HTMLElement>('[data-embed]');
+    const src = button.dataset.embedSrc;
+    const title = button.dataset.embedTitle;
+    if (!wrapper || !src) return;
+
+    const frame = wrapper.querySelector('.embed__frame');
+    if (!frame) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = title ?? '';
+    iframe.loading = 'lazy';
+    iframe.allow =
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+
+    frame.appendChild(iframe);
+    wrapper.setAttribute('data-embed-loaded', '');
+    iframe.focus();
+  });
+</script>

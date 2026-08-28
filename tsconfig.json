@@ -1,0 +1,9 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*", "*.config.mjs"],
+  "exclude": ["dist", "node_modules", "src/assets/_download", "scripts", "tools"],
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true
+  }
+}

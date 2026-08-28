@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pazdj.com/sitemap-index.xml

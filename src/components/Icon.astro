@@ -1,0 +1,26 @@
+---
+import { iconDefs, type IconName } from '../data/icons';
+
+interface Props {
+  name: IconName;
+  /** Alto del icono; el ancho lo fija la relación de aspecto del trazado. */
+  size?: string;
+  class?: string;
+}
+
+const { name, size = '1em', class: className } = Astro.props;
+const icon = iconDefs[name];
+const [, , vbW, vbH] = icon.viewBox.split(/\s+/).map(Number);
+---
+
+<svg
+  class={className}
+  viewBox={icon.viewBox}
+  style={`height:${size};width:calc(${size} * ${(vbW / vbH).toFixed(4)})`}
+  fill="currentColor"
+  fill-rule={'fillRule' in icon ? 'evenodd' : undefined}
+  aria-hidden="true"
+  focusable="false"
+  role="presentation"
+  ><path d={icon.d}></path>
+</svg>

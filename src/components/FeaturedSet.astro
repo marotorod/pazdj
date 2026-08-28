@@ -1,0 +1,116 @@
+---
+import { Picture } from 'astro:assets';
+import EmbedFrame from './EmbedFrame.astro';
+import { featuredSet } from '../data/site';
+import { texture } from '../data/photos';
+import poster from '../assets/photos/reconecta2-345-poster.jpg';
+
+const embedSrc = `https://www.youtube-nocookie.com/embed/${featuredSet.videoId}?autoplay=1&rel=0`;
+---
+
+<section class="set" id="sesion" aria-labelledby="set-heading">
+  <h2 class="sr-only" id="set-heading">Sesión destacada</h2>
+
+  <!-- Textura de fondo: decorativa, igual que en el original (14 % sobre el rojo). -->
+  <div class="set__texture" aria-hidden="true">
+    <Picture
+      src={texture.src}
+      alt=""
+      formats={['avif', 'webp']}
+      widths={[640, 1024, 1440]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="canvas set__layout">
+    <p class="set__caption reveal">{featuredSet.caption}</p>
+
+    <div class="set__player reveal">
+      <EmbedFrame
+        src={embedSrc}
+        title={featuredSet.videoTitle}
+        platform="YouTube"
+        href={featuredSet.watchUrl}
+      >
+        <Picture
+          slot="poster"
+          src={poster}
+          alt=""
+          formats={['avif', 'webp']}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 64rem) 66vw, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </EmbedFrame>
+    </div>
+  </div>
+</section>
+
+<style>
+  .set {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background-color: var(--color-red);
+    padding-block: var(--spacing-section);
+  }
+
+  .set__texture {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-media);
+    pointer-events: none;
+  }
+
+  .set__texture :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    /* Recorte equivalente al del canvas original. */
+    object-position: 50% 97%;
+    opacity: 0.14;
+  }
+
+  .set__layout {
+    position: relative;
+    z-index: var(--z-content);
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .set__caption {
+    margin: 0;
+    color: var(--color-paper);
+    font-size: var(--text-caption);
+    font-weight: 200;
+    line-height: 1.386;
+    text-align: right;
+    text-wrap: pretty;
+  }
+
+  /* Escritorio: columna estrecha de texto a la izquierda y reproductor a la
+     derecha, como en el original. La columna se ensancha lo justo para que no
+     queden líneas de tres palabras. */
+  @media (width >= 64rem) {
+    .set__layout {
+      grid-template-columns: minmax(0, 24%) minmax(0, 1fr);
+      align-items: start;
+      gap: clamp(2rem, 4.5vw, 4rem);
+    }
+
+    .set__caption {
+      max-inline-size: 24ch;
+      margin-inline-start: auto;
+    }
+  }
+
+  @media (width < 64rem) {
+    .set__caption {
+      max-inline-size: 46ch;
+      margin-inline-start: auto;
+    }
+  }
+</style>

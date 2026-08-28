@@ -1,0 +1,36 @@
+---
+/**
+ * Logotipo "PAZ".
+ *
+ * En pazdj.com está compuesto con Devasia, una tipografía comercial que no
+ * podemos redistribuir como webfont. Aquí viajan sólo las tres letras
+ * vectorizadas desde el render original: el trazado es idéntico al del sitio
+ * actual, pesa ~1 KB y no depende de que cargue ninguna fuente.
+ *
+ * El texto accesible lo aporta quien lo usa (normalmente el <h1>).
+ */
+import wordmark from '../assets/brand/wordmark-paz.svg?raw';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={['wordmark', className]} set:html={wordmark} />
+
+<style>
+  .wordmark {
+    display: block;
+    /* El SVG es cuadrado (683.59 × 683.59): el ancho lo marca el alto. */
+    inline-size: fit-content;
+    color: var(--color-ink);
+  }
+
+  .wordmark :global(svg) {
+    display: block;
+    block-size: var(--text-wordmark);
+    inline-size: auto;
+  }
+</style>

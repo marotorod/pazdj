@@ -1,0 +1,200 @@
+---
+import { Picture } from 'astro:assets';
+import EmbedFrame from './EmbedFrame.astro';
+import { gallery, hero } from '../data/photos';
+import { soundcloud } from '../data/site';
+
+/* El mosaico conserva la disposición del canvas original. Las tres letras
+   sueltas del diseño componen «P 4 Z» en el espacio negativo del mosaico. */
+const [cabina, barandilla, retratoGorro, pioneerExterior, retratoRojo] = gallery;
+
+const tiles = [
+  { slot: 'cab', photo: cabina },
+  { slot: 'bar', photo: barandilla },
+  { slot: 'gor', photo: retratoGorro },
+  { slot: 'pio', photo: pioneerExterior },
+  { slot: 'red', photo: retratoRojo },
+];
+
+const letters = [
+  { slot: 'ltp', char: 'P' },
+  { slot: 'lt4', char: '4' },
+  { slot: 'ltz', char: 'Z' },
+];
+---
+
+<section class="gallery" id="galeria" aria-labelledby="gallery-heading">
+  <h2 class="sr-only" id="gallery-heading">Galería y últimos tracks</h2>
+
+  <div class="canvas gallery__layout">
+    <div class="mosaic reveal">
+      {
+        tiles.map(({ slot, photo }) => (
+          <figure class:list={['tile', `is-${slot}`]}>
+            <Picture
+              src={photo.src}
+              alt={photo.alt}
+              formats={['avif', 'webp']}
+              widths={[240, 400, 480, 720]}
+              sizes="(min-width: 64rem) 17vw, 45vw"
+              loading="lazy"
+              decoding="async"
+              style={`object-position:${photo.focus}${photo.opacity ? `;opacity:${photo.opacity}` : ''}`}
+            />
+          </figure>
+        ))
+      }
+
+      {
+        letters.map(({ slot, char }) => (
+          <span class:list={['mosaic__letter', `is-${slot}`]} aria-hidden="true">
+            {char}
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="gallery__sound reveal">
+      <EmbedFrame
+        src={soundcloud.embedUrl}
+        title="Últimos tracks de PAZ"
+        platform="SoundCloud"
+        href={soundcloud.profileUrl}
+        ratio="4 / 3"
+      >
+        <Picture
+          slot="poster"
+          src={hero.src}
+          alt=""
+          formats={['avif', 'webp']}
+          fallbackFormat="png"
+          widths={[400, 600, 900]}
+          sizes="(min-width: 64rem) 35vw, 90vw"
+          loading="lazy"
+          decoding="async"
+          style="object-position:50% 14%;opacity:.85"
+        />
+      </EmbedFrame>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery {
+    background-color: var(--color-ink);
+    padding-block: var(--spacing-section);
+  }
+
+  .gallery__layout {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .mosaic {
+    display: grid;
+    gap: var(--spacing-gutter);
+  }
+
+  .tile {
+    margin: 0;
+    overflow: hidden;
+    min-inline-size: 0;
+  }
+
+  .tile :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .is-cab {
+    grid-area: cab;
+  }
+  .is-bar {
+    grid-area: bar;
+  }
+  .is-gor {
+    grid-area: gor;
+  }
+  .is-pio {
+    grid-area: pio;
+  }
+  .is-red {
+    grid-area: red;
+  }
+  .is-ltp {
+    grid-area: ltp;
+  }
+  .is-lt4 {
+    grid-area: lt4;
+  }
+
+  .mosaic__letter {
+    font-size: var(--text-letter);
+    font-weight: 200;
+    line-height: 1;
+    color: var(--color-text);
+    user-select: none;
+    align-self: start;
+    justify-self: start;
+  }
+
+  /* «Z» no tiene celda propia: vive en el hueco junto a la foto grande,
+     igual que en el diseño original. */
+  .is-ltz {
+    align-self: end;
+    justify-self: end;
+  }
+
+  /* ---------------------------------------------------------------------
+     Móvil: dos columnas de celdas cuadradas. El alto de fila se deriva del
+     ancho real disponible, así las proporciones no dependen del contenido.
+     --------------------------------------------------------------------- */
+  @media (width < 64rem) {
+    .mosaic {
+      --cell: calc((100vw - 2 * var(--spacing-inline) - var(--spacing-gutter)) / 2);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: var(--cell) var(--cell) auto var(--cell) var(--cell);
+      grid-template-areas:
+        'cab bar'
+        'cab red'
+        'ltp lt4'
+        'gor pio'
+        'gor .';
+    }
+
+    .is-ltz {
+      grid-column: 2;
+      grid-row: 5;
+      align-self: start;
+      justify-self: start;
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Escritorio: mosaico 3x3 de celdas cuadradas a la izquierda (la misma
+     retícula del original) y el reproductor a la derecha.
+     --------------------------------------------------------------------- */
+  @media (width >= 64rem) {
+    .gallery__layout {
+      grid-template-columns: minmax(0, 1.41fr) minmax(0, 1fr);
+      align-items: start;
+      gap: clamp(1.5rem, 2.3vw, 2.5rem);
+    }
+
+    .mosaic {
+      aspect-ratio: 1;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      grid-template-areas:
+        'cab bar ltp'
+        'cab lt4 gor'
+        'pio red gor';
+    }
+
+    .is-ltz {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+</style>

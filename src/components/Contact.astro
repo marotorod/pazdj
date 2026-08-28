@@ -1,0 +1,171 @@
+---
+import { Picture, Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { contact, credits } from '../data/site';
+import { texture } from '../data/photos';
+import yinyang from '../assets/brand/yinyang.png';
+---
+
+<footer class="contact" id="contacto">
+  <h2 class="sr-only">Contacto</h2>
+
+  <!-- Misma textura y misma opacidad que en el original. -->
+  <div class="contact__texture" aria-hidden="true">
+    <Picture
+      src={texture.src}
+      alt=""
+      formats={['avif', 'webp']}
+      widths={[640, 1024, 1440]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="canvas contact__layout">
+    <ul class="contact__list">
+      <li class="contact__label">CONTACTO:</li>
+      <li>
+        <a class="contact__link" href={`mailto:${contact.email}`}>
+          <Icon name="email" size="0.66em" class="contact__icon" />
+          <span>{contact.email}</span>
+        </a>
+      </li>
+      <li>
+        <a class="contact__link" href={contact.whatsapp} target="_blank" rel="noopener noreferrer">
+          <Icon name="whatsapp" size="0.86em" class="contact__icon" />
+          <span>{contact.phoneDisplay}</span>
+          <span class="sr-only">— escribir por WhatsApp (se abre en una pestaña nueva)</span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="contact__credit">
+      <span>{credits.label}</span>
+      <a href={credits.designerUrl} target="_blank" rel="noopener noreferrer">
+        <Image
+          src={yinyang}
+          alt={`${credits.designer} — estudio de diseño`}
+          widths={[160, 320]}
+          sizes="160px"
+          loading="lazy"
+          decoding="async"
+          class="contact__yinyang"
+        />
+      </a>
+      <!-- En pazdj.com «Drive Presskit» es un crédito sin enlace: se conserva
+           tal cual, como texto. Ver SITE_AUDIT.md. -->
+      <span class="contact__presskit">
+        <Icon name="drive" size="1.05em" />
+        {credits.product}
+      </span>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .contact {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background-color: var(--color-ink);
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .contact__texture {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-media);
+    pointer-events: none;
+  }
+
+  .contact__texture :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: 50% 71%; /* mismo encuadre que el canvas original */
+    opacity: 0.14;
+  }
+
+  .contact__layout {
+    position: relative;
+    z-index: var(--z-content);
+    display: grid;
+    justify-items: center;
+    gap: clamp(1.75rem, 4vw, 2.75rem);
+    text-align: center;
+  }
+
+  .contact__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.15em;
+    color: var(--color-paper);
+    font-size: var(--text-contact);
+    font-weight: 200;
+    line-height: var(--leading-tight);
+  }
+
+  .contact__label {
+    letter-spacing: 0.02em;
+  }
+
+  .contact__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45em;
+    /* Objetivo táctil cómodo sin romper el ritmo del bloque. */
+    min-block-size: 44px;
+    padding-inline: 0.25em;
+    text-decoration: none;
+    /* El subrayado se dibuja aparte para poder separarlo del texto. */
+    box-shadow: inset 0 -1px 0 0 color-mix(in srgb, currentColor 35%, transparent);
+    transition: box-shadow var(--duration-fast) var(--ease-editorial);
+    /* Correos y URLs largas nunca desbordan el viewport. */
+    overflow-wrap: anywhere;
+  }
+
+  .contact__link:hover,
+  .contact__link:focus-visible {
+    box-shadow: inset 0 -1px 0 0 currentColor;
+  }
+
+  .contact__icon {
+    flex: none;
+  }
+
+  .contact__credit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    color: var(--color-paper);
+    font-size: var(--text-credit);
+  }
+
+  .contact__credit a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding: 0.35rem;
+  }
+
+  .contact__yinyang {
+    inline-size: clamp(6.5rem, 9vw, 8.5rem);
+    block-size: auto;
+  }
+
+  .contact__presskit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    opacity: 0.85;
+  }
+</style>

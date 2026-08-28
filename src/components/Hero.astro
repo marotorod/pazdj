@@ -1,0 +1,162 @@
+---
+import { Picture } from 'astro:assets';
+import Wordmark from './Wordmark.astro';
+import { site } from '../data/site';
+import { hero } from '../data/photos';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__media">
+    <Picture
+      src={hero.src}
+      alt={hero.alt}
+      formats={['avif', 'webp']}
+      fallbackFormat="png"
+      widths={[480, 640, 820, 1200, 1640, hero.src.width]}
+      sizes="(min-width: 64rem) min(57.57vw, 820px), 100vw"
+      loading="eager"
+      fetchpriority="high"
+      decoding="sync"
+      class="hero__portrait"
+    />
+  </div>
+
+  <div class="hero__body">
+    <h1 class="hero__title" id="hero-title">
+      <span class="sr-only">{site.name}</span>
+      <Wordmark />
+    </h1>
+    <p class="hero__tagline">{site.tagline}</p>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background-color: var(--color-red);
+  }
+
+  .hero__media {
+    z-index: var(--z-media);
+  }
+
+  .hero__portrait {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    /* Punto focal explícito: el rostro nunca se pierde al recortar. */
+    object-position: 50% 18%;
+    /* Mismo tratamiento que el original: el rojo respira a través del duotono. */
+    opacity: 0.78;
+  }
+
+  .hero__title {
+    margin: 0;
+    line-height: 1;
+  }
+
+  .hero__tagline {
+    color: var(--color-text-soft);
+    font-size: var(--text-tagline);
+    font-weight: 200;
+    line-height: 1.38;
+    text-wrap: balance;
+  }
+
+  /* ---------------------------------------------------------------------
+     Móvil: el retrato ocupa la parte superior y el logotipo respira sobre
+     el campo rojo. Se mantiene la relación "foto dominante + tipografía
+     sobre rojo" del original sin superponer texto sobre el rostro.
+     --------------------------------------------------------------------- */
+  @media (width < 64rem) {
+    .hero {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      min-block-size: 100svh;
+    }
+
+    .hero__media {
+      grid-row: 1;
+      min-block-size: 0;
+      /* Mismo desplazamiento izquierdo (4,75 %) que en el diseño original. */
+      margin-inline-start: 4.75vw;
+    }
+
+    /* En escritorio el retrato sangra por abajo y nunca se ve su borde. Al
+       apilar en móvil sí aparecería un corte recto contra el rojo, así que
+       se disuelve en el fondo. */
+    .hero__portrait {
+      mask-image: linear-gradient(to bottom, #000 74%, transparent 99%);
+    }
+
+    .hero__body {
+      grid-row: 2;
+      display: grid;
+      justify-items: center;
+      gap: clamp(0.75rem, 3vw, 1.5rem);
+      padding: clamp(1.5rem, 5vw, 2.5rem) var(--spacing-inline) clamp(2.5rem, 8vw, 4rem);
+      text-align: center;
+    }
+
+    .hero__tagline {
+      margin: 0;
+      max-inline-size: 24ch;
+    }
+  }
+
+  /* En pantallas muy bajas (móvil apaisado) no forzamos el alto completo. */
+  @media (width < 64rem) and (height < 34rem) {
+    .hero {
+      min-block-size: auto;
+    }
+
+    .hero__media {
+      aspect-ratio: 3 / 2;
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Escritorio: se reconstruye la composición del canvas original
+     (retrato a la izquierda con sangrado vertical, logotipo a la derecha y
+     tagline centrada bajo él, invadiendo la foto).
+     --------------------------------------------------------------------- */
+  @media (width >= 64rem) {
+    .hero {
+      /* 66,9 % del ancho es la proporción real de pazdj.com a 1440 px.
+         El límite de 100svh evita que la tagline caiga bajo la línea de
+         flotación en portátiles, algo que sí ocurre en el original. */
+      min-block-size: min(66.9vw, 100svh, 60rem);
+      display: flex;
+      align-items: stretch;
+    }
+
+    .hero__media {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 4.75%;
+      inline-size: 57.57%;
+    }
+
+    .hero__body {
+      position: relative;
+      z-index: var(--z-content);
+      inline-size: 48.85%; /* desde el 51,15 % del canvas hasta el borde */
+      margin-inline-start: auto;
+      display: grid;
+      justify-items: center;
+      align-content: start;
+      gap: clamp(1rem, 2.6vw, 2.4rem);
+      /* El porcentaje se resuelve contra el ancho del hero: 24,4 % deja el
+         logotipo a la misma altura que en pazdj.com. */
+      padding-block-start: 24.4%;
+      padding-inline-end: 4.9%;
+      text-align: center;
+    }
+
+    .hero__tagline {
+      margin: 0;
+    }
+  }
+</style>
