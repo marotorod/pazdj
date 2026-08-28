@@ -445,11 +445,17 @@ async function newPage(opts = {}) {
   console.log(
     `\n  Peso del primer viewport: ${(bytes / 1024).toFixed(1)} KB (JS: ${(jsBytes / 1024).toFixed(1)} KB)`,
   );
-  check(
-    'JavaScript inicial por debajo de 15 KB',
-    jsBytes < 15 * 1024,
-    `${(jsBytes / 1024).toFixed(1)} KB`,
-  );
+  // El umbral sólo tiene sentido contra el build local: un servidor de
+  // desarrollo sirve los módulos sin empaquetar y multiplica la cifra.
+  if (REMOTE) {
+    console.log('  (informativo: el umbral sólo se exige sobre el build local)');
+  } else {
+    check(
+      'JavaScript inicial por debajo de 15 KB',
+      jsBytes < 15 * 1024,
+      `${(jsBytes / 1024).toFixed(1)} KB`,
+    );
+  }
   await ctx.close();
 }
 
