@@ -15,11 +15,6 @@
   --color-text: #a6a6a6; /* cuerpo de texto sobre ink — 6.6:1 */
   --color-text-soft: #bcbcbc; /* tagline sobre rojo — 6.4:1 */
   --color-paper: #ffffff; /* caption de vídeo y bloque de contacto */
-  /* Rojo elevado sólo para iconos/enlaces sobre ink: el #800000 original
-     da 1.5:1 y no cumple WCAG 1.4.11. Ver MIGRATION.md.
-     No llamarlo `--color-accent`: ese nombre ya existe en los temas de shadcn
-     y lo pisaría si el CSS conviviera con uno. */
-  --color-social: #d42b2b;
 
   /* --- Tipografía -------------------------------------------------------
      Escala fluida derivada de los tamaños del canvas original.           */

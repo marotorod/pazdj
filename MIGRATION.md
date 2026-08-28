@@ -181,16 +181,16 @@ próxima a Balgin: «a» de un solo piso, bowls casi circulares y `usWeightClass
 > `src/styles/global.css` y cambiar `--font-sans`. El resto del sistema no se
 > entera.
 
-### Color de los iconos sociales: `#800000` → `#d42b2b`
+### Color de los iconos sociales
 
-**Único cambio cromático de todo el proyecto.** El rojo de marca sobre el fondo
-oscuro da **1,47:1**, muy por debajo del mínimo de 3:1 que exige WCAG 1.4.11
-para elementos gráficos con significado — y esos iconos son la única señal de
-que hay un enlace ahí. El nuevo valor da **3,21:1** manteniendo el mismo
-registro cromático.
+En el original iban en `#800000` sobre el fondo oscuro: **1,47:1**, muy por
+debajo del mínimo de 3:1 que exige WCAG 1.4.11 para elementos gráficos con
+significado — y esos iconos son la única señal de que hay un enlace ahí.
 
-`#800000` sigue intacto en todo lo demás: fondos del hero y del vídeo, y como
-color de marca. Al pasar el ratón o enfocar, los iconos pasan a blanco.
+Al pasar los iconos al hero, el problema desaparece por otra vía: sobre el
+campo rojo van en el gris de la tagline (`#bcbcbc`), que da **5,8:1**. Al pasar
+el ratón o enfocar, pasan a blanco. `#800000` queda intacto como color de marca
+en los fondos del hero y del vídeo.
 
 ### Texto de interfaz añadido
 
@@ -212,19 +212,16 @@ Ninguna de estas cadenas aparece como copy visible que cambie el tono del sitio.
 
 Cambios pedidos expresamente, ya fuera del criterio de «no tocar el original»:
 
-- **Iconos sociales en el hero**, bajo la tagline. Usan el gris de la tagline
-  (`#bcbcbc`, 5,8:1 sobre el rojo) en lugar del rojo elevado del bloque de
-  biografía, que sobre `#800000` sólo daría 2,4:1.
+- **Iconos sociales en el hero**, bajo la tagline, en el gris de la propia
+  tagline (`#bcbcbc`, 5,8:1 sobre el rojo). Se retiraron los de la biografía:
+  aparecían dos veces y en móvil quedaban separados por un scroll corto. Es el
+  único elemento del diseño original que ya no está.
 - **Botón «CONTACTO»** en el hero: enlace de ancla a `#telefono`, el enlace de
   WhatsApp del pie. Al saltar, el foco cae sobre ese enlace, de modo que se
   puede continuar con el teclado.
 - **Prefijo internacional en el teléfono**: pasa de `3181121845` a
   `+57 3181121845`. Es el único texto de la web que ya no coincide
   literalmente con el original.
-
-Los cuatro enlaces sociales aparecen ahora dos veces (hero y biografía). Cada
-bloque lleva un nombre accesible distinto para que no se anuncien como
-duplicados.
 
 ### Ajustes de composición
 

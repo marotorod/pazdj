@@ -4,34 +4,18 @@ import { socials } from '../data/site';
 import type { IconName } from '../data/icons';
 
 interface Props {
-  /** Nombre accesible del bloque. Debe ser distinto en cada aparición. */
+  /** Nombre accesible del bloque. */
   label?: string;
-  /**
-   * `auto`  — fila en móvil, columna en escritorio (la del canvas original).
-   * `row`   — siempre en fila y centrada (hero).
-   */
-  layout?: 'auto' | 'row';
-  /**
-   * `accent` — rojo elevado, para el fondo oscuro.
-   * `soft`   — gris del tagline, para el campo rojo del hero.
-   */
-  tone?: 'accent' | 'soft';
-  /** Tamaño del icono; por defecto el del bloque de biografía. */
+  /** Tamaño del icono. */
   size?: string;
   class?: string;
 }
 
-const {
-  label = 'PAZ en redes y plataformas',
-  layout = 'auto',
-  tone = 'accent',
-  size,
-  class: className,
-} = Astro.props;
+const { label = 'Redes de PAZ', size, class: className } = Astro.props;
 ---
 
 <nav
-  class:list={['rail', `rail--${layout}`, `rail--${tone}`, className]}
+  class:list={['rail', className]}
   style={size ? `--rail-icon:${size}` : undefined}
   aria-label={label}
 >
@@ -58,6 +42,10 @@ const {
 
   .rail__list {
     display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.25rem, 2vw, 1.25rem);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -67,20 +55,11 @@ const {
     display: grid;
     place-items: center;
     padding: 0.5rem;
+    /* Mismo gris que la tagline: 5,8:1 sobre el rojo del hero. */
+    color: var(--color-text-soft);
     transition:
       color var(--duration-fast) var(--ease-editorial),
       transform var(--duration-fast) var(--ease-editorial);
-  }
-
-  /* Sobre el fondo oscuro: el #800000 del original da 1,5:1 y no cumple
-     WCAG 1.4.11; este rojo mantiene el registro cromático y llega a 3,2:1. */
-  .rail--accent .rail__link {
-    color: var(--color-social);
-  }
-
-  /* Sobre el campo rojo del hero: el mismo gris que la tagline, 5,8:1. */
-  .rail--soft .rail__link {
-    color: var(--color-text-soft);
   }
 
   .rail__link:hover,
@@ -90,42 +69,8 @@ const {
 
   /* El desplazamiento es un refuerzo, nunca la única señal de estado. */
   @media (prefers-reduced-motion: no-preference) and (pointer: fine) {
-    .rail--auto .rail__link:hover {
-      transform: translateX(0.25rem);
-    }
-
-    .rail--row .rail__link:hover {
+    .rail__link:hover {
       transform: translateY(-0.15rem);
-    }
-  }
-
-  /* --- layout `row`: siempre en fila y centrada -------------------------- */
-  .rail--row .rail__list {
-    flex-flow: row wrap;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(0.25rem, 2vw, 1.25rem);
-  }
-
-  /* --- layout `auto`: la disposición del canvas original ------------------ */
-  /* Móvil y tablet: fila horizontal, cómoda para el pulgar. */
-  @media (width < 64rem) {
-    .rail--auto .rail__list {
-      flex-flow: row wrap;
-      align-items: center;
-      justify-content: flex-end;
-      gap: clamp(0.5rem, 3vw, 1.5rem);
-    }
-  }
-
-  /* Escritorio: columna vertical a la izquierda del texto, como en el original. */
-  @media (width >= 64rem) {
-    .rail--auto .rail__list {
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      block-size: 100%;
-      gap: 1rem;
     }
   }
 </style>
