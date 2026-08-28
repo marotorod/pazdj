@@ -14,7 +14,13 @@ import { chromium } from 'playwright';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const PORT = 4333;
-const BASE = `http://localhost:${PORT}/`;
+
+// Se puede auditar una URL cualquiera:  node scripts/audit.mjs https://…
+// Sin argumento, se audita el build local de dist/.
+const TARGET = process.argv[2];
+const REMOTE = Boolean(TARGET);
+const BASE = TARGET || `http://localhost:${PORT}/`;
+const OWN_HOST = REMOTE ? new URL(BASE).host : `localhost:${PORT}`;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -30,23 +36,30 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-const server = await new Promise((resolve) => {
-  const s = http.createServer((req, res) => {
-    const url = decodeURIComponent((req.url || '/').split('?')[0]);
-    let file = path.join(DIST, url);
-    if (url.endsWith('/')) file = path.join(file, 'index.html');
-    if (!fs.existsSync(file) || fs.statSync(file).isDirectory())
-      file = path.join(DIST, url + '.html');
-    if (!fs.existsSync(file)) {
-      res.writeHead(404);
-      res.end('nf');
-      return;
-    }
-    res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
-    fs.createReadStream(file).pipe(res);
-  });
-  s.listen(PORT, () => resolve(s));
-});
+const server = REMOTE
+  ? null
+  : await new Promise((resolve) => {
+      const s = http.createServer((req, res) => {
+        const url = decodeURIComponent((req.url || '/').split('?')[0]);
+        let file = path.join(DIST, url);
+        if (url.endsWith('/')) file = path.join(file, 'index.html');
+        if (!fs.existsSync(file) || fs.statSync(file).isDirectory())
+          file = path.join(DIST, url + '.html');
+        if (!fs.existsSync(file)) {
+          res.writeHead(404);
+          res.end('nf');
+          return;
+        }
+        res.writeHead(200, {
+          'content-type': MIME[path.extname(file)] || 'application/octet-stream',
+        });
+        fs.createReadStream(file).pipe(res);
+      });
+      s.listen(PORT, () => resolve(s));
+    });
+
+console.log(`Auditando: ${BASE}
+`);
 
 const results = [];
 const check = (name, ok, detail = '') => {
@@ -393,7 +406,7 @@ async function newPage(opts = {}) {
   const hosts = new Set();
   page.on('request', (r) => {
     const h = new URL(r.url()).host;
-    if (h !== `localhost:${PORT}`) hosts.add(h);
+    if (h !== OWN_HOST) hosts.add(h);
   });
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.evaluate(async () => {
@@ -441,7 +454,7 @@ async function newPage(opts = {}) {
 }
 
 await browser.close();
-server.close();
+server?.close();
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${'='.repeat(60)}`);
