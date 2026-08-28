@@ -281,7 +281,7 @@ async function newPage(opts = {}) {
 {
   const { ctx, page } = await newPage();
   const seq = [];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 22; i++) {
     await page.keyboard.press('Tab');
     const el = await page.evaluate(() => {
       const a = document.activeElement;

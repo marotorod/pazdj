@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Wordmark from './Wordmark.astro';
+import SocialRail from './SocialRail.astro';
 import { site } from '../data/site';
 import { hero } from '../data/photos';
 ---
@@ -27,6 +28,16 @@ import { hero } from '../data/photos';
       <Wordmark />
     </h1>
     <p class="hero__tagline">{site.tagline}</p>
+
+    <div class="hero__actions">
+      <SocialRail
+        layout="row"
+        tone="soft"
+        size="clamp(1.5rem, 2.6vw, 2.25rem)"
+        label="Redes de PAZ"
+      />
+      <a class="hero__cta" href="#telefono">CONTACTO</a>
+    </div>
   </div>
 </section>
 
@@ -63,6 +74,38 @@ import { hero } from '../data/photos';
     font-weight: 200;
     line-height: 1.38;
     text-wrap: balance;
+  }
+
+  .hero__actions {
+    display: grid;
+    justify-items: center;
+    gap: clamp(0.75rem, 1.8vw, 1.5rem);
+  }
+
+  /* Botón de contacto: enlace de ancla al teléfono del pie. El trazo fino y
+     el versalita mantienen el registro editorial; nada de píldora de SaaS. */
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Objetivo táctil cómodo. */
+    min-block-size: 44px;
+    padding-inline: clamp(1.5rem, 3vw, 2.75rem);
+    border: 1px solid currentColor;
+    color: var(--color-text-soft);
+    font-size: clamp(0.8125rem, 1.05vw, 0.9375rem);
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-editorial),
+      background-color var(--duration-fast) var(--ease-editorial);
+  }
+
+  .hero__cta:hover,
+  .hero__cta:focus-visible {
+    background-color: var(--color-paper);
+    color: var(--color-red);
   }
 
   /* ---------------------------------------------------------------------

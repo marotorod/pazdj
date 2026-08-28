@@ -49,8 +49,8 @@ const PHONE_E164 = '+573181121845'; // Colombia (+57). El original sólo mostrab
 
 export const contact = {
   email: 'mariapazmendezespinosa@gmail.com',
-  /** Tal y como aparece en el sitio original: sin prefijo. */
-  phoneDisplay: '3181121845',
+  /** El original mostraba '3181121845'; se añade el prefijo de Colombia. */
+  phoneDisplay: '+57 3181121845',
   /** Formato E.164, única fuente del destino de WhatsApp. */
   phoneE164: PHONE_E164,
   whatsapp: `https://wa.me/${PHONE_E164.replace('+', '')}`,

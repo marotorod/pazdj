@@ -32,7 +32,13 @@ import yinyang from '../assets/brand/yinyang.png';
         </a>
       </li>
       <li>
-        <a class="contact__link" href={contact.whatsapp} target="_blank" rel="noopener noreferrer">
+        <a
+          class="contact__link"
+          id="telefono"
+          href={contact.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Icon name="whatsapp" size="0.86em" class="contact__icon" />
           <span>{contact.phoneDisplay}</span>
           <span class="sr-only">— escribir por WhatsApp (se abre en una pestaña nueva)</span>
@@ -114,6 +120,8 @@ import yinyang from '../assets/brand/yinyang.png';
   }
 
   .contact__link {
+    /* El botón del hero enlaza aquí: deja aire por encima al saltar. */
+    scroll-margin-block: 25vh;
     display: inline-flex;
     align-items: center;
     justify-content: center;

@@ -208,6 +208,24 @@ contenido editorial:
 
 Ninguna de estas cadenas aparece como copy visible que cambie el tono del sitio.
 
+### Añadidos a petición de PAZ (posteriores al port)
+
+Cambios pedidos expresamente, ya fuera del criterio de «no tocar el original»:
+
+- **Iconos sociales en el hero**, bajo la tagline. Usan el gris de la tagline
+  (`#bcbcbc`, 5,8:1 sobre el rojo) en lugar del rojo elevado del bloque de
+  biografía, que sobre `#800000` sólo daría 2,4:1.
+- **Botón «CONTACTO»** en el hero: enlace de ancla a `#telefono`, el enlace de
+  WhatsApp del pie. Al saltar, el foco cae sobre ese enlace, de modo que se
+  puede continuar con el teclado.
+- **Prefijo internacional en el teléfono**: pasa de `3181121845` a
+  `+57 3181121845`. Es el único texto de la web que ya no coincide
+  literalmente con el original.
+
+Los cuatro enlaces sociales aparecen ahora dos veces (hero y biografía). Cada
+bloque lleva un nombre accesible distinto para que no se anuncien como
+duplicados.
+
 ### Ajustes de composición
 
 | Cambio                                                 | Motivo                                                                       |
